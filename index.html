@@ -38,11 +38,13 @@ input, select, button {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    overflow-x: auto;
+    overflow-x: scroll;   /* ← important */
     width: 100%;
     margin-top: 10px;
     border: 1px solid #ccc;
-    -webkit-overflow-scrolling: touch;
+
+    -webkit-overflow-scrolling: touch; /* smooth iOS swipe */
+}webkit-overflow-scrolling: touch;
 }
 
 .day {
