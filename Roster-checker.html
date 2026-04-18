@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Shift Checker</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 20px;
+}
+.today {
+    border: 3px solid #000;
+    font-weight: bold;
+    transform: scale(1.1);
+    box-shadow: 0 0 6px rgba(0,0,0,0.3);
+    z-index: 1;
+}
+h1 { text-align: center; }
+input, select, button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 16px;
+}
+.result {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 18px;
+}
+.work { background: #d4edda; }
+.off { background: #f8d7da; }
+.cycle {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+.day {
+    flex: 1;
+    padding: 6px;
+    margin: 2px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+.day.work { background: #d4edda; }
+.day.off { background: #f8d7da; }
+</style>
+</head>
+
+<body>
+
+<h1>Shift Checker</h1>
+
+<label>First Work Day:</label> <input type="date" id="startDate">
+
+<label>Pattern:</label> <select id="pattern"> <option value="5-3">5 Work / 3 Off</option> <option value="4-4">4 Work / 4 Off</option> <option value="3-5">3 Work / 5 Off</option> </select>
+
+<label>Check Date:</label> <input type="date" id="checkDate">
+
+<button onclick="checkShift()">Check</button>
+
+<div id="output"></div>
+
+<script>
+function checkShift() {
+    const start = new Date(document.getElementById("startDate").value);
+    const check = new Date(document.getElementById("checkDate").value);
+    const pattern = document.getElementById("pattern").value;
+
+    if (!start || !check) {
+        alert("Please enter both dates");
+        return;
+    }
+
+    let workDays, offDays;
+    if (pattern === "5-3") { workDays = 5; offDays = 3; }
+    if (pattern === "4-4") { workDays = 4; offDays = 4; }
+    if (pattern === "3-5") { workDays = 3; offDays = 5; }
+
+    const cycle = workDays + offDays;
+
+    const diffTime = check - start;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    const pos = ((diffDays % cycle) + cycle) % cycle;
+
+    const isWork = pos < workDays;
+
+    const status = isWork ? "WORK" : "OFF";
+
+    let html = `
+        <div class="result ${isWork ? "work" : "off"}">
+            <strong>${check.toDateString()}</strong><br>
+            Status: ${status}
+        </div>
+    `;
+
+    // build cycle preview (8 days max)
+    html += `<div class="cycle">`;
+
+    for (let i = 0; i < cycle; i++) {
+        let dayType = i < workDays ? "work" : "off";
+        html += `<div class="day ${dayType}">${dayType}</div>`;
+    }
+
+    html += `</div>`;
+
+    document.getElementById("output").innerHTML = html;
+}
+</script>
+
+</body>
+</html>
