@@ -4,27 +4,28 @@
 <head>
 <meta charset="UTF-8">
 <title>Roster Checker</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
 <style>
 body {
     font-family: Arial, sans-serif;
     max-width: 500px;
-    margin: 40px auto;
-    padding: 20px;
+    margin: 20px auto;
+    padding: 15px;
 }
-.today {
-    border: 3px solid #000;
-    font-weight: bold;
-    transform: scale(1.1);
-    box-shadow: 0 0 6px rgba(0,0,0,0.3);
-    z-index: 1;
-}
+
 h1 { text-align: center; }
+
 input, select, button {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin: 10px 0;
     font-size: 16px;
 }
+
 .result {
     margin-top: 20px;
     padding: 15px;
@@ -32,28 +33,42 @@ input, select, button {
     text-align: center;
     font-size: 18px;
 }
-.work { background: #d4edda; }
-.off { background: #f8d7da; }
+
 .cycle {
     display: flex;
-    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    width: 100%;
     margin-top: 10px;
+    border: 1px solid #ccc;
+    -webkit-overflow-scrolling: touch;
 }
+
 .day {
-    flex: 1;
-    padding: 6px;
-    margin: 2px;
-    border-radius: 4px;
+    flex: 0 0 90px;
+    padding: 8px 4px;
+    border: 1px solid #ccc;
     font-size: 12px;
+    text-align: center;
+    box-sizing: border-box;
 }
-.day.work { background: #d4edda; }
-.day.off { background: #f8d7da; }
+
+.day.work { background: #f8d7da; }  /* red for work */
+.day.off  { background: #d4edda; }  /* green for off */
+
+.today {
+    border: 3px solid #000;
+    background: #fff;
+    font-weight: bold;
+}
 </style>
+
 </head>
 
 <body>
 
-<h1>Shift Checker</h1>
+<h1>Roster Checker</h1>
 
 <label>First Work Day:</label> <input type="date" id="startDate">
 
@@ -61,7 +76,7 @@ input, select, button {
 
 <label>Check Date:</label> <input type="date" id="checkDate">
 
-<button onclick="checkShift()">Check</button>
+<button onclick="checkShift()">Check Roster</button>
 
 <div id="output"></div>
 
@@ -83,47 +98,51 @@ function checkShift() {
 
     const cycle = workDays + offDays;
 
-    const diffTime = check - start;
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const isWorkDay = (date) => {
+        const diff = Math.floor((date - start) / (1000 * 60 * 60 * 24));
+        const pos = ((diff % cycle) + cycle) % cycle;
+        return pos < workDays;
+    };
 
-    const pos = ((diffDays % cycle) + cycle) % cycle;
-
-    const isWork = pos < workDays;
-
-    const status = isWork ? "WORK" : "OFF";
+    const isWork = isWorkDay(check);
 
     let html = `
         <div class="result ${isWork ? "work" : "off"}">
             <strong>${check.toDateString()}</strong><br>
-            Status: ${status}
+            Status: ${isWork ? "WORK" : "OFF"}
         </div>
     `;
 
-    // build cycle preview (8 days max)
     html += `<div class="cycle">`;
 
-   // 8-day window centred on selected date
-html += `<div class="cycle">`;
+    for (let i = -3; i <= 4; i++) {
+        let d = new Date(check);
+        d.setDate(check.getDate() + i);
 
-for (let i = -3; i <= 4; i++) {
-    let d = new Date(check);
-    d.setDate(check.getDate() + i);
+        let type = isWorkDay(d) ? "work" : "off";
 
-    let diff = Math.floor((d - start) / (1000 * 60 * 60 * 24));
-    let p = ((diff % cycle) + cycle) % cycle;
+        let label = d.toLocaleDateString(undefined, { day: '2-digit', month: 'short' });
 
-    let type = p < workDays ? "work" : "off";
+        html += `<div class="day ${type} ${i===0 ? 'today' : ''}">
+                    ${label}<br>${type}
+                 </div>`;
+    }
 
-    let label = d.toLocaleDateString(undefined, { day: '2-digit', month: 'short' });
-
-    html += `<div class="day ${type} ${i===0 ? 'today' : ''}">
-                ${label}<br>${type}
-             </div>`;
-}
-
-html += `</div>`;
+    html += `</div>`;
 
     document.getElementById("output").innerHTML = html;
+
+    // Auto-centre selected day
+    setTimeout(() => {
+        const today = document.querySelector('.today');
+        if (today) {
+            today.scrollIntoView({
+                behavior: 'smooth',
+                inline: 'center',
+                block: 'nearest'
+            });
+        }
+    }, 100);
 }
 </script>
 
