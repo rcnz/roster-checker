@@ -1,13 +1,198 @@
-Pattern:
+<!DOCTYPE html>
 
-5 Work / 3 Off
-4 Work / 4 Off
-3 Work / 5 Off
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Roster Checker</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#000000">
+
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="apple-mobile-web-app-title" content="O-Days">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 15px;
+}
+
+h1 { text-align: center; }
+
+input, select, button {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+.result {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.cycle {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: scroll;
+    width: 100%;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    -webkit-overflow-scrolling: touch;
+}
+
+.day {
+    flex: 0 0 90px;
+    padding: 8px 4px;
+    border: 1px solid #ccc;
+    font-size: 12px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.day.work { background: #f8d7da; }
+.day.off  { background: #d4edda; }
+
+.today {
+    border: 3px solid #000;
+    background: #fff;
+    font-weight: bold;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>Roster Checker</h1>
+
+<div id="app">
+<label>First Work Day:</label>
+<input type="date" id="startDate">
+
+<label>Pattern:</label> <select id="pattern"> <option value="5-3">5 Work / 3 Off</option> <option value="4-4">4 Work / 4 Off</option> <option value="3-5">3 Work / 5 Off</option> </select>
+
+<label>Check Date:</label> <input type="date" id="checkDate">
+
+<button onclick="checkShift()">Check Roster</button>
+
+<div id="output"></div>
+</div>
+
+<script>
+
+// LOGIN
+function showLogin() {
+    document.body.innerHTML = `
+        <div style="
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+            font-family:sans-serif;
+            text-align:center;
+        ">
+            <h2>O-Days</h2>
+            <input type="password" id="pw" placeholder="Enter password" 
+                style="padding:10px; font-size:16px; margin:10px; border-radius:6px;">
+            <button onclick="checkPassword()" 
+                style="padding:10px 20px; font-size:16px; border-radius:8px;">
+                Enter
+            </button>
+        </div>
+    `;
+}
+
+function checkPassword() {
+    const input = document.getElementById("pw").value.trim();
+
+    if (input === "123koru") {
+        localStorage.setItem("oDaysAccess", "true");
+        location.reload();
+    } else {
+        alert("Incorrect password");
+    }
+}
+
+if (localStorage.getItem("oDaysAccess") !== "true") {
+    showLogin();
+}
 
 
+// MAIN FUNCTION
+function checkShift() {
+    const start = new Date(document.getElementById("startDate").value);
+    const check = new Date(document.getElementById("checkDate").value);
+    const pattern = document.getElementById("pattern").value;
 
-Check Date:
+    if (!start || !check) {
+        alert("Please enter both dates");
+        return;
+    }
 
+    let workDays, offDays;
+    if (pattern === "5-3") { workDays = 5; offDays = 3; }
+    if (pattern === "4-4") { workDays = 4; offDays = 4; }
+    if (pattern === "3-5") { workDays = 3; offDays = 5; }
 
+    const cycle = workDays + offDays;
 
-Check Roster
+    const isWorkDay = (date) => {
+        const diff = Math.floor((date - start) / (1000 * 60 * 60 * 24));
+        const pos = ((diff % cycle) + cycle) % cycle;
+        return pos < workDays;
+    };
+
+    const isWork = isWorkDay(check);
+
+    let html = `
+        <div class="result ${isWork ? "work" : "off"}">
+            <strong>${check.toDateString()}</strong><br>
+            Status: ${isWork ? "WORK" : "OFF"}
+        </div>
+    `;
+
+    html += `<div class="cycle">`;
+
+    for (let i = -3; i <= 4; i++) {
+        let d = new Date(check);
+        d.setDate(check.getDate() + i);
+
+        let type = isWorkDay(d) ? "work" : "off";
+        let label = d.toLocaleDateString(undefined, { day: '2-digit', month: 'short' });
+
+        html += `<div class="day ${type} ${i===0 ? 'today' : ''}">
+                    ${label}<br>${type}
+                 </div>`;
+    }
+
+    html += `</div>`;
+
+    document.getElementById("output").innerHTML = html;
+
+    setTimeout(() => {
+        const today = document.querySelector('.today');
+        if (today) {
+            today.scrollIntoView({
+                behavior: 'smooth',
+                inline: 'center',
+                block: 'nearest'
+            });
+        }
+    }, 100);
+}
+
+</script>
+
+</body>
+</html>
+
