@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -27,6 +28,42 @@ h1 {
     letter-spacing: 2px;
 }
 
+/* layout */
+.cycle {
+    display: flex;
+    overflow-x: auto;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+/* tiles */
+.day {
+    flex: 0 0 90px;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    background: #222;
+    color: #ccc;
+}
+
+/* work vs off */
+.day.work {
+    opacity: 0.5;
+}
+
+.day.off {
+    background: #00e676;
+    color: #000;
+    font-weight: bold;
+}
+
+/* highlight today */
+.today {
+    border: 2px solid #fff;
+    background: #111;
+}
+
+/* inputs */
 input, select, button {
     width: 100%;
     padding: 14px;
@@ -44,34 +81,10 @@ input, select {
 button {
     background: #007aff;
     color: white;
-}
-
-.cycle {
-    display: flex;
-    overflow-x: auto;
-    gap: 6px;
-}
-
-.day {
-    flex: 0 0 90px;
-    padding: 10px;
-    border-radius: 10px;
-}
-
-.day.off {
-    background: #00e676;
-    color: #000;
     font-weight: bold;
 }
-
-.day.work {
-    opacity: 0.5;
-}
-
-.today {
-    border: 2px solid #fff;
-}
 </style>
+
 </head>
 
 <body>
@@ -84,28 +97,32 @@ button {
     <label>First Work Day:</label>
     <input type="date" id="startDate">
 
-    <label>Pattern:</label>
-    <select id="pattern">
-        <option value="5-3">5 Work / 3 Off</option>
-        <option value="4-4">4 Work / 4 Off</option>
-        <option value="3-5">3 Work / 5 Off</option>
-    </select>
+```
+<label>Pattern:</label>
+<select id="pattern">
+    <option value="5-3">5 Work / 3 Off</option>
+    <option value="4-4">4 Work / 4 Off</option>
+    <option value="3-5">3 Work / 5 Off</option>
+</select>
+```
+
 </div>
 
-<label>Check Date:</label>
-<input type="date" id="checkDate">
+<label>Check Date:</label> <input type="date" id="checkDate">
 
 <button onclick="checkShift()">Check Roster</button>
 
 <div id="output"></div>
 
 <script>
+
 function toggleSettings() {
     const box = document.getElementById("settingsBox");
     box.style.display = (box.style.display === "none") ? "block" : "none";
 }
 
 function checkShift() {
+
     const start = new Date(document.getElementById("startDate").value);
     const check = new Date(document.getElementById("checkDate").value);
     const pattern = document.getElementById("pattern").value;
@@ -115,11 +132,17 @@ function checkShift() {
         return;
     }
 
-    let workDays = pattern.split("-")[0];
+    let workDays, offDays;
+    if (pattern === "5-3") { workDays = 5; offDays = 3; }
+    if (pattern === "4-4") { workDays = 4; offDays = 4; }
+    if (pattern === "3-5") { workDays = 3; offDays = 5; }
+
+    const cycle = workDays + offDays;
 
     const isWorkDay = (date) => {
         const diff = Math.floor((date - start) / (1000 * 60 * 60 * 24));
-        return (diff % 8) < workDays;
+        const pos = ((diff % cycle) + cycle) % cycle;
+        return pos < workDays;
     };
 
     let html = "<div class='cycle'>";
@@ -130,5 +153,17 @@ function checkShift() {
 
         let type = isWorkDay(d) ? "work" : "off";
 
-        html += `<div class="day ${type}">${d.getDate()}</div>`;
+        html += `<div class="day ${type} ${i===0 ? 'today' : ''}">
+                    ${d.getDate()}<br>${type}
+                 </div>`;
     }
+
+    html += "</div>";
+
+    document.getElementById("output").innerHTML = html;
+}
+
+</script>
+
+</body>
+</html>
