@@ -90,12 +90,7 @@ const params = new URLSearchParams(window.location.search);
 const team = params.get("team");
 
 if (team !== "crew1") {
-    document.body.innerHTML = `
-        <div style="text-align:center; margin-top:80px; font-family:sans-serif;">
-            <h2>O-Days</h2>
-            <p>Access restricted</p>
-        </div>
-    `;
+    document.body.innerHTML = "...";
 }
 
 // Main function
