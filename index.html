@@ -85,6 +85,12 @@ input, select, button {
 <div id="output"></div>
 
 <script>
+const params = new URLSearchParams(window.location.search);
+const team = params.get("team");
+
+if (team !== "crew1") {
+    document.body.innerHTML = "<h2 style='text-align:center; margin-top:50px;'>Access restricted</h2>";
+    throw new Error("Unauthorized");
 function checkShift() {
     const start = new Date(document.getElementById("startDate").value);
     const check = new Date(document.getElementById("checkDate").value);
