@@ -7,7 +7,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#000000">
-    
+
 <link rel="apple-touch-icon" href="icon.png">
 <meta name="apple-mobile-web-app-title" content="O-Days">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -58,8 +58,8 @@ input, select, button {
     box-sizing: border-box;
 }
 
-.day.work { background: #f8d7da; }  /* red for work */
-.day.off  { background: #d4edda; }  /* green for off */
+.day.work { background: #f8d7da; }
+.day.off  { background: #d4edda; }
 
 .today {
     border: 3px solid #000;
@@ -85,12 +85,20 @@ input, select, button {
 <div id="output"></div>
 
 <script>
+// Team gate
 const params = new URLSearchParams(window.location.search);
 const team = params.get("team");
 
 if (team !== "crew1") {
-    document.body.innerHTML = "<h2 style='text-align:center; margin-top:50px;'>Access restricted</h2>";
-    throw new Error("Unauthorized");
+    document.body.innerHTML = `
+        <div style="text-align:center; margin-top:80px; font-family:sans-serif;">
+            <h2>O-Days</h2>
+            <p>Access restricted</p>
+        </div>
+    `;
+}
+
+// Main function
 function checkShift() {
     const start = new Date(document.getElementById("startDate").value);
     const check = new Date(document.getElementById("checkDate").value);
@@ -130,7 +138,6 @@ function checkShift() {
         d.setDate(check.getDate() + i);
 
         let type = isWorkDay(d) ? "work" : "off";
-
         let label = d.toLocaleDateString(undefined, { day: '2-digit', month: 'short' });
 
         html += `<div class="day ${type} ${i===0 ? 'today' : ''}">
@@ -142,7 +149,7 @@ function checkShift() {
 
     document.getElementById("output").innerHTML = html;
 
-    // Auto-centre selected day
+    // auto-centre selected day
     setTimeout(() => {
         const today = document.querySelector('.today');
         if (today) {
