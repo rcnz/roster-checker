@@ -40,15 +40,8 @@ input, select, button {
     to { opacity: 1; transform: translateY(0); }
 }
 
-.cycle {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    overflow-x: scroll;
-    width: 100%;
-    margin-top: 10px;
-    border: 1px solid #ccc;
-    -webkit-overflow-scrolling: touch;
+.cycle::-webkit-scrollbar {
+    display: none;
 }
 
 .day {
