@@ -114,6 +114,21 @@ function checkPassword() {
     const input = document.getElementById("pw").value;
 
     if (input === "123koru") {
+        localStorage.setItem("oDaysAccess", "true");
+        location.reload();
+    } else {
+        alert("Incorrect password");
+    }
+}
+
+// Check if already unlocked
+if (localStorage.getItem("oDaysAccess") !== "true") {
+    showLogin();
+}
+function checkPassword() {
+    const input = document.getElementById("pw").value;
+
+    if (input === "123koru") {
         unlocked = true;
         location.reload();
     } else {
