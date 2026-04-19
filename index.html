@@ -86,11 +86,44 @@ input, select, button {
 
 <script>
 // Team gate
-const params = new URLSearchParams(window.location.search);
-const team = params.get("team");
+let unlocked = false;
 
-if (team !== "crew1") {
-    document.body.innerHTML = "...";
+function showLogin() {
+    document.body.innerHTML = `
+        <div style="
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+            font-family:sans-serif;
+            text-align:center;
+        ">
+            <h2>O-Days</h2>
+            <input type="password" id="pw" placeholder="Enter password" 
+                style="padding:10px; font-size:16px; margin:10px; border-radius:6px;">
+            <button onclick="checkPassword()" 
+                style="padding:10px 20px; font-size:16px; border-radius:8px;">
+                Enter
+            </button>
+        </div>
+    `;
+}
+
+function checkPassword() {
+    const input = document.getElementById("pw").value;
+
+    if (input === "123koru") {
+        unlocked = true;
+        location.reload();
+    } else {
+        alert("Incorrect password");
+    }
+}
+
+// Run login check on load
+if (!unlocked) {
+    showLogin();
 }
 
 // Main function
