@@ -1,47 +1,85 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>O-Days</title>
 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#000000">
+
 <style>
 body {
-  font-family: Arial;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 18px;
   background: black;
   color: white;
-  padding: 15px;
 }
 
-.day {
-  display: inline-block;
-  width: 75px;
-  padding: 10px;
-  margin: 4px;
+h1 {
   text-align: center;
-  border-radius: 10px;
-  font-size: 13px;
-
-  border: 2px solid #555;   /* brighter base border */
+  font-size: 26px;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
 }
 
-/* WORK = secondary */
+/* INPUTS */
+input, select {
+  width: 100%;
+  padding: 16px;
+  margin: 12px 0;
+  font-size: 18px;
+  border-radius: 12px;
+  border: none;
+  background: #1c1c1e;
+  color: white;
+}
+
+/* ROW */
+.cycle {
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+/* CARDS */
+.day {
+  flex: 0 0 90px;
+  padding: 12px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 15px;
+  border: 2px solid #555;
+}
+
+/* WORK */
 .work {
   background: #8b0000;
   color: #fff;
 }
 
-/* OFF = primary */
+/* OFF */
 .off {
   background: #00e676;
   color: #000;
   font-weight: bold;
 }
 
-/* CURRENT CHECK DATE */
+/* SELECTED DAY */
 .today {
-  border: 3px solid #ffffff;   /* strong white outline */
-  box-shadow: 0 0 8px #ffffff; /* glow */
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 10px #fff;
+}
+
+/* VERSION TAG */
+.version {
+  position: fixed;
+  bottom: 5px;
+  right: 10px;
+  font-size: 12px;
+  opacity: 0.5;
 }
 </style>
 
@@ -49,20 +87,22 @@ body {
 
 <body>
 
-<h2>O-DAYS</h2>
+<h1>O-DAYS</h1>
 
-<label>Start of Work Block:</label><br> <input id="start" type="date"><br><br>
+<label>Start of Work Block:</label> <input id="start" type="date">
 
-<label>Pattern:</label><br> <select id="pattern">
+<label>Pattern:</label> <select id="pattern">
 
   <option value="5-3">5 / 3</option>
   <option value="4-4">4 / 4</option>
   <option value="3-5">3 / 5</option>
-</select><br><br>
+</select>
 
-<label>Check Date:</label><br> <input id="check" type="date" onchange="run()"><br><br>
+<label>Check Date:</label> <input id="check" type="date" onchange="run()">
 
 <div id="out"></div>
+
+<div class="version">v8</div>
 
 <script>
 function run() {
@@ -84,12 +124,13 @@ function run() {
 
     let type = pos < work ? "work" : "off";
 
-    html += "<div class='day " + type + "'>" +
+    html += "<div class='day " + type + (i===0 ? " today" : "") + "'>" +
             d.getDate() + "<br>" + type +
             "</div>";
   }
 
-  document.getElementById("out").innerHTML = html;
+  document.getElementById("out").innerHTML =
+    "<div class='cycle'>" + html + "</div>";
 }
 </script>
 
