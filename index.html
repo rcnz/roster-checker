@@ -1,8 +1,117 @@
-⚙ Settings
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Roster Checker</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#000000">
+
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="apple-mobile-web-app-title" content="O-Days">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+<!-- Flatpickr -->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 15px;
+    background: #000;
+    color: #fff;
+}
+
+h1 {
+    text-align: center;
+    font-size: 20px;
+    letter-spacing: 2px;
+}
+
+/* layout */
+.cycle {
+    display: flex;
+    overflow-x: auto;
+    gap: 6px;
+    margin-top: 10px;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* tiles */
+.day {
+    flex: 0 0 90px;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    background: #222;
+    color: #ccc;
+}
+
+.day.work {
+    opacity: 0.5;
+}
+
+.day.off {
+    background: #00e676;
+    color: #000;
+    font-weight: bold;
+}
+
+/* highlight today */
+.today {
+    border: 2px solid #fff;
+    background: #111;
+}
+
+/* inputs */
+input, select, button {
+    width: 100%;
+    padding: 14px;
+    margin: 10px 0;
+    font-size: 16px;
+    border-radius: 10px;
+    border: none;
+}
+
+input, select {
+    background: #1c1c1e;
+    color: white;
+}
+
+button {
+    background: #007aff;
+    color: white;
+    font-weight: bold;
+}
+
+/* banner */
+.banner {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #00e676;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>O-DAYS</h1>
+
+<button onclick="toggleSettings()">⚙ Settings</button>
+
+<div id="settingsBox">
+    <label>First Work Day:</label>
+    <input type="text" id="startDate">
 
 ```
 <label>Pattern:</label>
-
 <select id="pattern">
     <option value="5-3">5 Work / 3 Off</option>
     <option value="4-4">4 Work / 4 Off</option>
@@ -10,4 +119,111 @@
 </select>
 ```
 
-Check Date:\
+</div>
+
+<label>Check Date:</label> <input type="text" id="checkDate">
+
+<div id="banner" class="banner"></div>
+<div id="output"></div>
+
+<script>
+
+/* toggle settings */
+function toggleSettings() {
+    const box = document.getElementById("settingsBox");
+    box.style.display = (box.style.display === "none") ? "block" : "none";
+}
+
+/* date pickers */
+flatpickr("#startDate", { dateFormat: "Y-m-d" });
+flatpickr("#checkDate", { dateFormat: "Y-m-d" });
+
+/* load saved settings */
+window.addEventListener("DOMContentLoaded", () => {
+    const savedStart = localStorage.getItem("startDate");
+    const savedPattern = localStorage.getItem("pattern");
+
+    if (savedStart && savedPattern) {
+        document.getElementById("startDate").value = savedStart;
+        document.getElementById("pattern").value = savedPattern;
+        document.getElementById("settingsBox").style.display = "none";
+    }
+});
+
+/* auto-run when date changes */
+document.addEventListener("change", function(e) {
+    if (e.target.id === "checkDate") {
+        checkShift();
+    }
+});
+
+function checkShift() {
+
+    const startVal = document.getElementById("startDate").value;
+    const checkVal = document.getElementById("checkDate").value;
+    const pattern = document.getElementById("pattern").value;
+
+    if (!startVal || !checkVal) return;
+
+    const start = new Date(startVal);
+    const check = new Date(checkVal);
+
+    localStorage.setItem("startDate", startVal);
+    localStorage.setItem("pattern", pattern);
+
+    let workDays, offDays;
+    if (pattern === "5-3") { workDays = 5; offDays = 3; }
+    if (pattern === "4-4") { workDays = 4; offDays = 4; }
+    if (pattern === "3-5") { workDays = 3; offDays = 5; }
+
+    const cycle = workDays + offDays;
+
+    const isWorkDay = (date) => {
+        const diff = Math.floor((date - start) / (1000 * 60 * 60 * 24));
+        const pos = ((diff % cycle) + cycle) % cycle;
+        return pos < workDays;
+    };
+
+    /* next OFF */
+    let nextOff = new Date(check);
+    while (isWorkDay(nextOff)) {
+        nextOff.setDate(nextOff.getDate() + 1);
+    }
+
+    document.getElementById("banner").innerHTML =
+        "Next OFF: " + nextOff.toDateString();
+
+    let html = "<div class='cycle'>";
+
+    for (let i = -3; i <= 4; i++) {
+        let d = new Date(check);
+        d.setDate(check.getDate() + i);
+
+        let type = isWorkDay(d) ? "work" : "off";
+
+        html += `<div class="day ${type} ${i===0 ? 'today' : ''}">
+                    ${d.getDate()}<br>${type.toUpperCase()}
+                 </div>`;
+    }
+
+    html += "</div>";
+
+    document.getElementById("output").innerHTML = html;
+
+    /* center */
+    setTimeout(() => {
+        const today = document.querySelector('.today');
+        if (today) {
+            today.scrollIntoView({
+                behavior: 'smooth',
+                inline: 'center',
+                block: 'nearest'
+            });
+        }
+    }, 100);
+}
+
+</script>
+
+</body>
+</html>
