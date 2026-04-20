@@ -15,22 +15,32 @@ body {
 
 .day {
   display: inline-block;
-  width: 70px;
-  padding: 8px;
-  margin: 3px;
+  width: 75px;
+  padding: 10px;
+  margin: 4px;
   text-align: center;
-  border-radius: 8px;
+  border-radius: 10px;
   background: #222;
+  color: #ccc;
+  font-size: 13px;
 }
 
+/* WORK = visible but secondary */
+.work {
+  background: #8b0000;   /* deep red */
+  color: #fff;
+}
+
+/* OFF = dominant */
 .off {
-  background: #00e676;
-  color: black;
+  background: #00e676;   /* bright green */
+  color: #000;
   font-weight: bold;
 }
 
-.work {
-  opacity: 0.4;
+/* highlight current day */
+.today {
+  border: 2px solid #fff;
 }
 </style>
 
