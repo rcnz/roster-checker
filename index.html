@@ -20,27 +20,28 @@ body {
   margin: 4px;
   text-align: center;
   border-radius: 10px;
-  background: #222;
-  color: #ccc;
   font-size: 13px;
+
+  border: 2px solid #555;   /* brighter base border */
 }
 
-/* WORK = visible but secondary */
+/* WORK = secondary */
 .work {
-  background: #8b0000;   /* deep red */
+  background: #8b0000;
   color: #fff;
 }
 
-/* OFF = dominant */
+/* OFF = primary */
 .off {
-  background: #00e676;   /* bright green */
+  background: #00e676;
   color: #000;
   font-weight: bold;
 }
 
-/* highlight current day */
+/* CURRENT CHECK DATE */
 .today {
-  border: 2px solid #fff;
+  border: 3px solid #ffffff;   /* strong white outline */
+  box-shadow: 0 0 8px #ffffff; /* glow */
 }
 </style>
 
