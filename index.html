@@ -42,7 +42,6 @@ input, select {
   overflow-x: auto;
   gap: 10px;
   margin-top: 15px;
-  padding-bottom: 5px;
 }
 
 /* tiles */
@@ -55,33 +54,32 @@ input, select {
   border: 2px solid #666;
 }
 
-/* WORK (secondary) */
+/* WORK */
 .work {
   background: #8b0000;
   color: #fff;
   opacity: 0.85;
 }
 
-/* OFF (primary signal) */
+/* OFF */
 .off {
   background: #00e676;
   color: #000;
   font-weight: bold;
-  border: 2px solid #00ff88;
-  box-shadow: 0 0 8px rgba(0,255,136,0.6);
 }
 
 /* SELECTED DAY */
 .today {
   border: 3px solid #ffffff;
-  background: #000;
+  background: #111;
+  color: #ffffff;
   box-shadow: 
     0 0 16px #ffffff,
     inset 0 0 6px #ffffff;
   transform: scale(1.05);
 }
 
-/* version tag */
+/* version */
 .version {
   position: fixed;
   bottom: 5px;
@@ -110,7 +108,7 @@ input, select {
 
 <div id="out"></div>
 
-<div class="version">v10</div>
+<div class="version">v11</div>
 
 <script>
 function run() {
