@@ -42,6 +42,7 @@ input, select {
   overflow-x: auto;
   gap: 10px;
   margin-top: 15px;
+  scroll-behavior: smooth;
 }
 
 /* tiles */
@@ -108,7 +109,7 @@ input, select {
 
 <div id="out"></div>
 
-<div class="version">v11</div>
+<div class="version">v12</div>
 
 <script>
 function run() {
@@ -136,7 +137,19 @@ function run() {
   }
 
   document.getElementById("out").innerHTML =
-    "<div class='cycle'>" + html + "</div>";
+    "<div class='cycle' id='cycle'>" + html + "</div>";
+
+  // 👉 AUTO-CENTRE SELECTED DAY
+  setTimeout(() => {
+    const today = document.querySelector('.today');
+    if (today) {
+      today.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+        block: "nearest"
+      });
+    }
+  }, 50);
 }
 </script>
 
