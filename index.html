@@ -17,14 +17,6 @@ body {
   color: white;
 }
 
-.today {
-  border: 3px solid #ffffff;
-  background: #000;
-  box-shadow: 0 0 14px #ffffff,
-              inset 0 0 6px #ffffff;
-}
-</style>
-
 h1 {
   text-align: center;
   font-size: 26px;
@@ -32,7 +24,7 @@ h1 {
   margin-bottom: 20px;
 }
 
-/* INPUTS */
+/* inputs */
 input, select {
   width: 100%;
   padding: 16px;
@@ -44,44 +36,52 @@ input, select {
   color: white;
 }
 
-/* ROW */
+/* row */
 .cycle {
   display: flex;
   overflow-x: auto;
-  gap: 8px;
+  gap: 10px;
   margin-top: 15px;
+  padding-bottom: 5px;
 }
 
-/* CARDS */
+/* tiles */
 .day {
-  flex: 0 0 90px;
+  flex: 0 0 95px;
   padding: 12px;
   border-radius: 12px;
   text-align: center;
   font-size: 15px;
-  border: 2px solid #555;
+  border: 2px solid #666;
 }
 
-/* WORK */
+/* WORK (secondary) */
 .work {
   background: #8b0000;
   color: #fff;
+  opacity: 0.85;
 }
 
-/* OFF */
+/* OFF (primary signal) */
 .off {
   background: #00e676;
   color: #000;
   font-weight: bold;
+  border: 2px solid #00ff88;
+  box-shadow: 0 0 8px rgba(0,255,136,0.6);
 }
 
 /* SELECTED DAY */
 .today {
   border: 3px solid #ffffff;
-  box-shadow: 0 0 10px #fff;
+  background: #000;
+  box-shadow: 
+    0 0 16px #ffffff,
+    inset 0 0 6px #ffffff;
+  transform: scale(1.05);
 }
 
-/* VERSION TAG */
+/* version tag */
 .version {
   position: fixed;
   bottom: 5px;
@@ -110,7 +110,7 @@ input, select {
 
 <div id="out"></div>
 
-<div class="version">v8</div>
+<div class="version">v10</div>
 
 <script>
 function run() {
