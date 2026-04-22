@@ -25,15 +25,24 @@ h1 {
 }
 
 /* inputs */
-input, select {
+input, select, button {
   width: 100%;
   padding: 16px;
   margin: 12px 0;
   font-size: 18px;
   border-radius: 12px;
   border: none;
+}
+
+input, select {
   background: #1c1c1e;
   color: white;
+}
+
+button {
+  background: #007aff;
+  color: white;
+  font-weight: bold;
 }
 
 /* row */
@@ -42,8 +51,6 @@ input, select {
   overflow-x: auto;
   gap: 10px;
   margin-top: 15px;
-  scroll-snap-type: x mandatory;   /* 👈 snap */
-  -webkit-overflow-scrolling: touch;
 }
 
 /* tiles */
@@ -54,57 +61,38 @@ input, select {
   text-align: center;
   font-size: 15px;
   border: 2px solid #666;
-  scroll-snap-align: center;      /* 👈 snap target */
 }
 
-/* WORK */
 .work {
   background: #8b0000;
   color: #fff;
   opacity: 0.85;
 }
 
-/* OFF */
 .off {
   background: #00e676;
   color: #000;
   font-weight: bold;
 }
 
-/* SELECTED */
 .today {
   border: 3px solid #ffffff;
   background: #111;
   color: #ffffff;
-  box-shadow: 
-    0 0 16px #ffffff,
-    inset 0 0 6px #ffffff;
+  box-shadow: 0 0 16px #ffffff,
+              inset 0 0 6px #ffffff;
   transform: scale(1.05);
 }
 
-/* EDGE FADE */
-.cycle::before,
-.cycle::after {
-  content: "";
-  position: sticky;
-  width: 30px;
-  height: 100%;
-  top: 0;
-  z-index: 2;
-  pointer-events: none;
+/* login screen */
+.login {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
 }
 
-.cycle::before {
-  left: 0;
-  background: linear-gradient(to right, black, transparent);
-}
-
-.cycle::after {
-  right: 0;
-  background: linear-gradient(to left, black, transparent);
-}
-
-/* version */
 .version {
   position: fixed;
   bottom: 5px;
@@ -117,6 +105,14 @@ input, select {
 </head>
 
 <body>
+
+<div id="loginScreen" class="login" style="display:none;">
+  <h2>O-DAYS</h2>
+  <input type="password" id="pw" placeholder="Enter password">
+  <button onclick="checkPassword()">Enter</button>
+</div>
+
+<div id="app" style="display:none;">
 
 <h1>O-DAYS</h1>
 
@@ -133,9 +129,39 @@ input, select {
 
 <div id="out"></div>
 
-<div class="version">v13</div>
+<div class="version">v12-secure</div>
+
+</div>
 
 <script>
+
+/* PASSWORD CHECK */
+const PASSWORD = "123koru";
+
+function checkPassword() {
+  const input = document.getElementById("pw").value.trim();
+
+  if (input === PASSWORD) {
+    localStorage.setItem("auth", "yes");
+    showApp();
+  } else {
+    alert("Incorrect password");
+  }
+}
+
+function showApp() {
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("app").style.display = "block";
+}
+
+/* ON LOAD */
+if (localStorage.getItem("auth") === "yes") {
+  showApp();
+} else {
+  document.getElementById("loginScreen").style.display = "flex";
+}
+
+/* MAIN FUNCTION */
 function run() {
   let s = new Date(document.getElementById("start").value);
   let c = new Date(document.getElementById("check").value);
