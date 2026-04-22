@@ -6,77 +6,51 @@
 <title>O-Days</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#000000">
+
+<!-- Flatpickr -->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <style>
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 18px;
+  font-family: Arial;
   background: black;
   color: white;
+  padding: 18px;
 }
 
 h1 {
   text-align: center;
   font-size: 26px;
-  letter-spacing: 2px;
-  margin-bottom: 20px;
 }
 
-input, select, button {
+/* inputs */
+input, select {
   width: 100%;
   padding: 16px;
   margin: 12px 0;
   font-size: 18px;
   border-radius: 12px;
   border: none;
-}
-
-input, select {
   background: #1c1c1e;
   color: white;
 }
 
-.banner {
-  text-align: center;
-  margin: 10px 0;
-  font-size: 18px;
-  font-weight: bold;
-  color: #00e676;
-}
-
-.cycle {
-  display: flex;
-  overflow-x: auto;
-  gap: 10px;
-  margin-top: 15px;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-}
-
+/* tiles */
 .day {
-  flex: 0 0 95px;
+  display: inline-block;
+  width: 90px;
   padding: 12px;
-  border-radius: 12px;
+  margin: 4px;
+  border-radius: 10px;
   text-align: center;
-  font-size: 15px;
   border: 2px solid #666;
-}
-
-.day-number {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.day-label {
-  font-size: 13px;
 }
 
 .work {
   background: #8b0000;
   color: #fff;
-  opacity: 0.85;
 }
 
 .off {
@@ -85,45 +59,9 @@ input, select {
   font-weight: bold;
 }
 
-.work.today {
-  background: #ff2a2a;
-  border: 3px solid #ffffff;
-  box-shadow: 0 0 14px #ff2a2a;
-  opacity: 1;
-  transform: scale(1.08);
-}
-
-.off.today {
-  background: #00ff99;
-  border: 3px solid #ffffff;
-  box-shadow: 0 0 14px #00ff99;
-  transform: scale(1.08);
-}
-
-/* EXTRA EMPHASIS FOR SELECTED */
-.today .day-number {
-  font-size: 22px;
-}
-
-.today .day-label {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.login {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 100vh;
-  text-align: center;
-}
-
-.version {
-  position: fixed;
-  bottom: 5px;
-  right: 10px;
-  font-size: 12px;
-  opacity: 0.5;
+.today {
+  border: 3px solid #fff;
+  box-shadow: 0 0 14px #fff;
 }
 </style>
 
@@ -131,17 +69,9 @@ input, select {
 
 <body>
 
-<div id="loginScreen" class="login" style="display:none;">
-  <h2>O-DAYS</h2>
-  <input type="password" id="pw" placeholder="Enter password">
-  <button onclick="checkPassword()">Enter</button>
-</div>
-
-<div id="app" style="display:none;">
-
 <h1>O-DAYS</h1>
 
-<label>Start of Work Block:</label> <input id="start" type="date">
+<label>Start of Work Block:</label> <input id="start">
 
 <label>Pattern:</label> <select id="pattern">
 
@@ -150,64 +80,26 @@ input, select {
   <option value="3-5">3 / 5</option>
 </select>
 
-<label>Check Date:</label> <input id="check" type="date" onchange="run()">
-
-<div id="nextOff" class="banner"></div>
+<label>Check Date:</label> <input id="check">
 
 <div id="out"></div>
 
-<div class="version">v18</div>
-
-</div>
-
 <script>
 
-const PASSWORD = "123koru";
+/* date picker */
+flatpickr("#start", {
+  dateFormat: "d M Y"
+});
 
-function checkPassword() {
-  const input = document.getElementById("pw").value.trim();
-
-  if (input === PASSWORD) {
-    localStorage.setItem("auth", "yes");
-    showApp();
-  } else {
-    alert("Incorrect password");
-  }
-}
-
-function showApp() {
-  document.getElementById("loginScreen").style.display = "none";
-  document.getElementById("app").style.display = "block";
-}
-
-if (localStorage.getItem("auth") === "yes") {
-  showApp();
-} else {
-  document.getElementById("loginScreen").style.display = "flex";
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-  const s = localStorage.getItem("start");
-  const p = localStorage.getItem("pattern");
-
-  if (s) document.getElementById("start").value = s;
-  if (p) document.getElementById("pattern").value = p;
+flatpickr("#check", {
+  dateFormat: "d M Y",
+  onChange: run
 });
 
 function run() {
-
-  let sVal = document.getElementById("start").value;
-  let cVal = document.getElementById("check").value;
+  let s = new Date(document.getElementById("start").value);
+  let c = new Date(document.getElementById("check").value);
   let p = document.getElementById("pattern").value.split("-");
-
-  if (!sVal || !cVal) return;
-
-  localStorage.setItem("start", sVal);
-  localStorage.setItem("pattern", document.getElementById("pattern").value);
-
-  let s = new Date(sVal);
-  let c = new Date(cVal);
-
   let work = parseInt(p[0]);
   let off = parseInt(p[1]);
   let cycle = work + off;
@@ -222,34 +114,13 @@ function run() {
     let pos = ((diff % cycle) + cycle) % cycle;
 
     let type = pos < work ? "work" : "off";
-    let label = (i === 0) ? type.toUpperCase() : type;
 
     html += "<div class='day " + type + (i===0 ? " today" : "") + "'>" +
-            "<div class='day-number'>" + d.getDate() + "</div>" +
-            "<div class='day-label'>" + label + "</div>" +
+            d.getDate() + "<br>" + type +
             "</div>";
   }
 
-  document.getElementById("out").innerHTML =
-    "<div class='cycle'>" + html + "</div>";
-
-  let next = new Date(c);
-  while (true) {
-    let diff = Math.floor((next - s) / 86400000);
-    let pos = ((diff % cycle) + cycle) % cycle;
-    if (pos >= work) break;
-    next.setDate(next.getDate() + 1);
-  }
-
-  document.getElementById("nextOff").innerText =
-    "Next OFF: " + next.toDateString();
-
-  setTimeout(() => {
-    document.querySelector('.today')?.scrollIntoView({
-      behavior: "smooth",
-      inline: "center"
-    });
-  }, 50);
+  document.getElementById("out").innerHTML = html;
 }
 </script>
 
