@@ -34,6 +34,13 @@ input, select {
   color: white;
 }
 
+.helper {
+  font-size: 13px;
+  opacity: 0.7;
+  margin-top: -8px;
+  margin-bottom: 12px;
+}
+
 .banner {
   text-align: center;
   margin: 10px 0;
@@ -42,22 +49,12 @@ input, select {
   color: #00ff99;
 }
 
-.helper {
-  text-align: center;
-  font-size: 13px;
-  opacity: 0.7;
-  margin-top: -5px;
-  margin-bottom: 10px;
-}
-
-/* row */
 .cycle {
   display: flex;
   overflow-x: auto;
   gap: 10px;
 }
 
-/* tiles */
 .day {
   display: inline-block;
   width: 90px;
@@ -77,13 +74,11 @@ input, select {
   font-size: 13px;
 }
 
-/* WORK */
 .work {
   background: #8b0000;
   color: #fff;
 }
 
-/* OFF */
 .off {
   background: #00ff99;
   color: #000;
@@ -91,7 +86,6 @@ input, select {
   box-shadow: 0 0 8px #00ff99;
 }
 
-/* SELECTED */
 .work.today {
   background: #ff2a2a;
   border: 3px solid #fff;
@@ -101,9 +95,7 @@ input, select {
 .off.today {
   background: #00ff99;
   border: 3px solid #fff;
-  box-shadow:
-    0 0 16px #00ff99,
-    0 0 30px #00ff99;
+  box-shadow: 0 0 16px #00ff99;
 }
 
 .today .day-number {
@@ -132,6 +124,10 @@ input, select {
 
 <label>Start of Work Block:</label> <input id="start">
 
+<div class="helper">
+  Cycle anchored to your first WORK day of block
+</div>
+
 <label>Pattern:</label> <select id="pattern">
 
   <option value="5-3">5 / 3</option>
@@ -142,17 +138,17 @@ input, select {
 <label>Check Date:</label> <input id="check">
 
 <div id="nextOff" class="banner"></div>
-<div class="helper">Cycle anchored to your first WORK day of block</div>
 
 <div id="out"></div>
 
-<div class="version">v26</div>
+<div class="version">v27</div>
 
 <script>
 
 flatpickr("#start", { dateFormat: "d M Y" });
 flatpickr("#check", { dateFormat: "d M Y", onChange: run });
 
+/* load saved values */
 window.addEventListener("DOMContentLoaded", () => {
   const s = localStorage.getItem("start");
   const p = localStorage.getItem("pattern");
