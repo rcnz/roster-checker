@@ -64,6 +64,15 @@ input, select {
   border: 2px solid #666;
 }
 
+.day-number {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.day-label {
+  font-size: 13px;
+}
+
 .work {
   background: #8b0000;
   color: #fff;
@@ -89,6 +98,16 @@ input, select {
   border: 3px solid #ffffff;
   box-shadow: 0 0 14px #00ff99;
   transform: scale(1.08);
+}
+
+/* EXTRA EMPHASIS FOR SELECTED */
+.today .day-number {
+  font-size: 22px;
+}
+
+.today .day-label {
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .login {
@@ -137,7 +156,7 @@ input, select {
 
 <div id="out"></div>
 
-<div class="version">v17</div>
+<div class="version">v18</div>
 
 </div>
 
@@ -203,11 +222,11 @@ function run() {
     let pos = ((diff % cycle) + cycle) % cycle;
 
     let type = pos < work ? "work" : "off";
-
     let label = (i === 0) ? type.toUpperCase() : type;
 
     html += "<div class='day " + type + (i===0 ? " today" : "") + "'>" +
-            d.getDate() + "<br>" + label +
+            "<div class='day-number'>" + d.getDate() + "</div>" +
+            "<div class='day-label'>" + label + "</div>" +
             "</div>";
   }
 
