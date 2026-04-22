@@ -7,6 +7,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<!-- Flatpickr -->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <style>
 body {
   font-family: Arial;
@@ -50,27 +55,35 @@ input, select {
 
 /* tiles */
 .day {
+  display: inline-block;
   width: 90px;
   padding: 12px;
   margin: 4px;
-  border-radius: 12px;
+  border-radius: 10px;
   text-align: center;
   border: 2px solid #666;
 }
 
-/* WORK (slightly toned down) */
+.day-number {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.day-label {
+  font-size: 13px;
+}
+
+/* WORK */
 .work {
   background: #8b0000;
   color: #fff;
-  opacity: 0.8;
 }
 
-/* OFF (stronger neon feel) */
+/* OFF */
 .off {
   background: #00ff99;
   color: #000;
   font-weight: bold;
-  border: 2px solid #00ffcc;
   box-shadow: 0 0 8px #00ff99;
 }
 
@@ -79,14 +92,15 @@ input, select {
   background: #ff2a2a;
   border: 3px solid #fff;
   box-shadow: 0 0 14px #ff2a2a;
+  transform: scale(1.08);
 }
 
-/* SELECTED OFF (BIG glow) */
+/* SELECTED OFF */
 .off.today {
   background: #00ff99;
-  border: 3px solid #ffffff;
+  border: 3px solid #fff;
   box-shadow:
-    0 0 18px #00ff99,
+    0 0 16px #00ff99,
     0 0 30px #00ff99;
   transform: scale(1.08);
 }
@@ -117,7 +131,7 @@ input, select {
 
 <h1>O-DAYS</h1>
 
-<label>Start of Work Block:</label> <input id="start" type="date">
+<label>Start of Work Block:</label> <input id="start">
 
 <label>Pattern:</label> <select id="pattern">
 
@@ -126,15 +140,27 @@ input, select {
   <option value="3-5">3 / 5</option>
 </select>
 
-<label>Check Date:</label> <input id="check" type="date" onchange="run()">
+<label>Check Date:</label> <input id="check">
 
 <div id="nextOff" class="banner"></div>
 
 <div id="out"></div>
 
-<div class="version">v23</div>
+<div class="version">v24</div>
 
 <script>
+
+/* date pickers */
+flatpickr("#start", {
+  dateFormat: "d M Y"
+});
+
+flatpickr("#check", {
+  dateFormat: "d M Y",
+  onChange: run
+});
+
+/* main logic */
 function run() {
 
   let s = new Date(document.getElementById("start").value);
@@ -168,6 +194,7 @@ function run() {
   document.getElementById("out").innerHTML =
     "<div class='cycle'>" + html + "</div>";
 
+  /* next OFF */
   let next = new Date(c);
   while (true) {
     let diff = Math.floor((next - s) / 86400000);
@@ -178,6 +205,13 @@ function run() {
 
   document.getElementById("nextOff").innerText =
     "Next OFF: " + next.toDateString();
+
+  setTimeout(() => {
+    document.querySelector('.today')?.scrollIntoView({
+      behavior: "smooth",
+      inline: "center"
+    });
+  }, 50);
 }
 </script>
 
