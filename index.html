@@ -42,7 +42,8 @@ input, select {
   overflow-x: auto;
   gap: 10px;
   margin-top: 15px;
-  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;   /* 👈 snap */
+  -webkit-overflow-scrolling: touch;
 }
 
 /* tiles */
@@ -53,6 +54,7 @@ input, select {
   text-align: center;
   font-size: 15px;
   border: 2px solid #666;
+  scroll-snap-align: center;      /* 👈 snap target */
 }
 
 /* WORK */
@@ -69,7 +71,7 @@ input, select {
   font-weight: bold;
 }
 
-/* SELECTED DAY */
+/* SELECTED */
 .today {
   border: 3px solid #ffffff;
   background: #111;
@@ -78,6 +80,28 @@ input, select {
     0 0 16px #ffffff,
     inset 0 0 6px #ffffff;
   transform: scale(1.05);
+}
+
+/* EDGE FADE */
+.cycle::before,
+.cycle::after {
+  content: "";
+  position: sticky;
+  width: 30px;
+  height: 100%;
+  top: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.cycle::before {
+  left: 0;
+  background: linear-gradient(to right, black, transparent);
+}
+
+.cycle::after {
+  right: 0;
+  background: linear-gradient(to left, black, transparent);
 }
 
 /* version */
@@ -109,7 +133,7 @@ input, select {
 
 <div id="out"></div>
 
-<div class="version">v12</div>
+<div class="version">v13</div>
 
 <script>
 function run() {
@@ -137,18 +161,13 @@ function run() {
   }
 
   document.getElementById("out").innerHTML =
-    "<div class='cycle' id='cycle'>" + html + "</div>";
+    "<div class='cycle'>" + html + "</div>";
 
-  // 👉 AUTO-CENTRE SELECTED DAY
   setTimeout(() => {
-    const today = document.querySelector('.today');
-    if (today) {
-      today.scrollIntoView({
-        behavior: "smooth",
-        inline: "center",
-        block: "nearest"
-      });
-    }
+    document.querySelector('.today')?.scrollIntoView({
+      behavior: "smooth",
+      inline: "center"
+    });
   }, 50);
 }
 </script>
