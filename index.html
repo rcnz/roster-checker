@@ -7,8 +7,6 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- Flatpickr -->
-
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
@@ -25,7 +23,6 @@ h1 {
   font-size: 26px;
 }
 
-/* inputs */
 input, select {
   width: 100%;
   padding: 16px;
@@ -37,13 +34,20 @@ input, select {
   color: white;
 }
 
-/* banner */
 .banner {
   text-align: center;
   margin: 10px 0;
   font-size: 18px;
   font-weight: bold;
   color: #00ff99;
+}
+
+.helper {
+  text-align: center;
+  font-size: 13px;
+  opacity: 0.7;
+  margin-top: -5px;
+  margin-bottom: 10px;
 }
 
 /* row */
@@ -87,25 +91,21 @@ input, select {
   box-shadow: 0 0 8px #00ff99;
 }
 
-/* SELECTED WORK */
+/* SELECTED */
 .work.today {
   background: #ff2a2a;
   border: 3px solid #fff;
   box-shadow: 0 0 14px #ff2a2a;
-  transform: scale(1.08);
 }
 
-/* SELECTED OFF */
 .off.today {
   background: #00ff99;
   border: 3px solid #fff;
   box-shadow:
     0 0 16px #00ff99,
     0 0 30px #00ff99;
-  transform: scale(1.08);
 }
 
-/* emphasis */
 .today .day-number {
   font-size: 22px;
 }
@@ -115,7 +115,6 @@ input, select {
   font-weight: bold;
 }
 
-/* version */
 .version {
   position: fixed;
   bottom: 5px;
@@ -143,31 +142,38 @@ input, select {
 <label>Check Date:</label> <input id="check">
 
 <div id="nextOff" class="banner"></div>
+<div class="helper">Cycle anchored to your first WORK day of block</div>
 
 <div id="out"></div>
 
-<div class="version">v24</div>
+<div class="version">v26</div>
 
 <script>
 
-/* date pickers */
-flatpickr("#start", {
-  dateFormat: "d M Y"
+flatpickr("#start", { dateFormat: "d M Y" });
+flatpickr("#check", { dateFormat: "d M Y", onChange: run });
+
+window.addEventListener("DOMContentLoaded", () => {
+  const s = localStorage.getItem("start");
+  const p = localStorage.getItem("pattern");
+
+  if (s) document.getElementById("start").value = s;
+  if (p) document.getElementById("pattern").value = p;
 });
 
-flatpickr("#check", {
-  dateFormat: "d M Y",
-  onChange: run
-});
-
-/* main logic */
 function run() {
 
-  let s = new Date(document.getElementById("start").value);
-  let c = new Date(document.getElementById("check").value);
+  let sVal = document.getElementById("start").value;
+  let cVal = document.getElementById("check").value;
   let p = document.getElementById("pattern").value.split("-");
 
-  if (!s || !c) return;
+  if (!sVal || !cVal) return;
+
+  localStorage.setItem("start", sVal);
+  localStorage.setItem("pattern", document.getElementById("pattern").value);
+
+  let s = new Date(sVal);
+  let c = new Date(cVal);
 
   let work = parseInt(p[0]);
   let off = parseInt(p[1]);
@@ -194,7 +200,6 @@ function run() {
   document.getElementById("out").innerHTML =
     "<div class='cycle'>" + html + "</div>";
 
-  /* next OFF */
   let next = new Date(c);
   while (true) {
     let diff = Math.floor((next - s) / 86400000);
@@ -205,13 +210,6 @@ function run() {
 
   document.getElementById("nextOff").innerText =
     "Next OFF: " + next.toDateString();
-
-  setTimeout(() => {
-    document.querySelector('.today')?.scrollIntoView({
-      behavior: "smooth",
-      inline: "center"
-    });
-  }, 50);
 }
 </script>
 
