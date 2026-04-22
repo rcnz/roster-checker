@@ -7,11 +7,6 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- Flatpickr -->
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
 <style>
 body {
   font-family: Arial;
@@ -43,7 +38,7 @@ input, select {
   margin: 10px 0;
   font-size: 18px;
   font-weight: bold;
-  color: #00e676;
+  color: #00ff99;
 }
 
 /* row */
@@ -55,48 +50,45 @@ input, select {
 
 /* tiles */
 .day {
-  display: inline-block;
   width: 90px;
   padding: 12px;
   margin: 4px;
-  border-radius: 10px;
+  border-radius: 12px;
   text-align: center;
   border: 2px solid #666;
 }
 
-.day-number {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.day-label {
-  font-size: 13px;
-}
-
-/* WORK */
+/* WORK (slightly toned down) */
 .work {
   background: #8b0000;
   color: #fff;
+  opacity: 0.8;
 }
 
-/* OFF */
+/* OFF (stronger neon feel) */
 .off {
-  background: #00e676;
+  background: #00ff99;
   color: #000;
   font-weight: bold;
+  border: 2px solid #00ffcc;
+  box-shadow: 0 0 8px #00ff99;
 }
 
-/* SELECTED */
+/* SELECTED WORK */
 .work.today {
   background: #ff2a2a;
   border: 3px solid #fff;
   box-shadow: 0 0 14px #ff2a2a;
 }
 
+/* SELECTED OFF (BIG glow) */
 .off.today {
   background: #00ff99;
-  border: 3px solid #fff;
-  box-shadow: 0 0 14px #00ff99;
+  border: 3px solid #ffffff;
+  box-shadow:
+    0 0 18px #00ff99,
+    0 0 30px #00ff99;
+  transform: scale(1.08);
 }
 
 /* emphasis */
@@ -125,7 +117,7 @@ input, select {
 
 <h1>O-DAYS</h1>
 
-<label>Start of Work Block:</label> <input id="start">
+<label>Start of Work Block:</label> <input id="start" type="date">
 
 <label>Pattern:</label> <select id="pattern">
 
@@ -134,27 +126,15 @@ input, select {
   <option value="3-5">3 / 5</option>
 </select>
 
-<label>Check Date:</label> <input id="check">
+<label>Check Date:</label> <input id="check" type="date" onchange="run()">
 
 <div id="nextOff" class="banner"></div>
 
 <div id="out"></div>
 
-<div class="version">v22</div>
+<div class="version">v23</div>
 
 <script>
-
-/* date pickers */
-flatpickr("#start", {
-  dateFormat: "Y-m-d"
-});
-
-flatpickr("#check", {
-  dateFormat: "Y-m-d",
-  onChange: run
-});
-
-/* main logic */
 function run() {
 
   let s = new Date(document.getElementById("start").value);
@@ -188,7 +168,6 @@ function run() {
   document.getElementById("out").innerHTML =
     "<div class='cycle'>" + html + "</div>";
 
-  /* next OFF */
   let next = new Date(c);
   while (true) {
     let diff = Math.floor((next - s) / 86400000);
