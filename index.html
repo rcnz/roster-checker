@@ -39,6 +39,7 @@ input, select {
   opacity: 0.7;
   margin-top: -8px;
   margin-bottom: 12px;
+  display: none;
 }
 
 .banner {
@@ -124,7 +125,7 @@ input, select {
 
 <label>Start of Work Block:</label> <input id="start">
 
-<div class="helper">
+<div id="helperText" class="helper">
   Cycle anchored to your first WORK day of block
 </div>
 
@@ -141,12 +142,27 @@ input, select {
 
 <div id="out"></div>
 
-<div class="version">v27</div>
+<div class="version">v28</div>
 
 <script>
 
-flatpickr("#start", { dateFormat: "d M Y" });
-flatpickr("#check", { dateFormat: "d M Y", onChange: run });
+flatpickr("#start", {
+  dateFormat: "d M Y",
+  onChange: toggleHelper
+});
+
+flatpickr("#check", {
+  dateFormat: "d M Y",
+  onChange: run
+});
+
+/* show/hide helper */
+function toggleHelper() {
+  const startVal = document.getElementById("start").value;
+  const helper = document.getElementById("helperText");
+
+  helper.style.display = startVal ? "block" : "none";
+}
 
 /* load saved values */
 window.addEventListener("DOMContentLoaded", () => {
@@ -155,6 +171,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
   if (s) document.getElementById("start").value = s;
   if (p) document.getElementById("pattern").value = p;
+
+  toggleHelper();
 });
 
 function run() {
