@@ -7,11 +7,6 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- Flatpickr -->
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
 <style>
 body {
   font-family: Arial;
@@ -37,6 +32,22 @@ input, select {
   color: white;
 }
 
+/* banner */
+.banner {
+  text-align: center;
+  margin: 10px 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #00e676;
+}
+
+/* row */
+.cycle {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+}
+
 /* tiles */
 .day {
   display: inline-block;
@@ -48,20 +59,59 @@ input, select {
   border: 2px solid #666;
 }
 
+.day-number {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.day-label {
+  font-size: 13px;
+}
+
+/* WORK */
 .work {
   background: #8b0000;
   color: #fff;
 }
 
+/* OFF */
 .off {
   background: #00e676;
   color: #000;
   font-weight: bold;
 }
 
-.today {
+/* SELECTED WORK */
+.work.today {
+  background: #ff2a2a;
   border: 3px solid #fff;
-  box-shadow: 0 0 14px #fff;
+  box-shadow: 0 0 14px #ff2a2a;
+}
+
+/* SELECTED OFF */
+.off.today {
+  background: #00ff99;
+  border: 3px solid #fff;
+  box-shadow: 0 0 14px #00ff99;
+}
+
+/* SELECTED TEXT EMPHASIS */
+.today .day-number {
+  font-size: 22px;
+}
+
+.today .day-label {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* version */
+.version {
+  position: fixed;
+  bottom: 5px;
+  right: 10px;
+  font-size: 14px;
+  opacity: 0.7;
 }
 </style>
 
@@ -71,7 +121,7 @@ input, select {
 
 <h1>O-DAYS</h1>
 
-<label>Start of Work Block:</label> <input id="start">
+<label>Start of Work Block:</label> <input id="start" type="date">
 
 <label>Pattern:</label> <select id="pattern">
 
@@ -80,26 +130,23 @@ input, select {
   <option value="3-5">3 / 5</option>
 </select>
 
-<label>Check Date:</label> <input id="check">
+<label>Check Date:</label> <input id="check" type="date" onchange="run()">
+
+<div id="nextOff" class="banner"></div>
 
 <div id="out"></div>
 
+<div class="version">v21</div>
+
 <script>
-
-/* date picker */
-flatpickr("#start", {
-  dateFormat: "d M Y"
-});
-
-flatpickr("#check", {
-  dateFormat: "d M Y",
-  onChange: run
-});
-
 function run() {
+
   let s = new Date(document.getElementById("start").value);
   let c = new Date(document.getElementById("check").value);
   let p = document.getElementById("pattern").value.split("-");
+
+  if (!s || !c) return;
+
   let work = parseInt(p[0]);
   let off = parseInt(p[1]);
   let cycle = work + off;
@@ -114,13 +161,28 @@ function run() {
     let pos = ((diff % cycle) + cycle) % cycle;
 
     let type = pos < work ? "work" : "off";
+    let label = (i === 0) ? type.toUpperCase() : type;
 
     html += "<div class='day " + type + (i===0 ? " today" : "") + "'>" +
-            d.getDate() + "<br>" + type +
+            "<div class='day-number'>" + d.getDate() + "</div>" +
+            "<div class='day-label'>" + label + "</div>" +
             "</div>";
   }
 
-  document.getElementById("out").innerHTML = html;
+  document.getElementById("out").innerHTML =
+    "<div class='cycle'>" + html + "</div>";
+
+  /* next OFF */
+  let next = new Date(c);
+  while (true) {
+    let diff = Math.floor((next - s) / 86400000);
+    let pos = ((diff % cycle) + cycle) % cycle;
+    if (pos >= work) break;
+    next.setDate(next.getDate() + 1);
+  }
+
+  document.getElementById("nextOff").innerText =
+    "Next OFF: " + next.toDateString();
 }
 </script>
 
