@@ -23,17 +23,27 @@ h1 {
   font-size: 26px;
 }
 
-input, select {
+input, select, button {
   width: 100%;
   padding: 16px;
   margin: 12px 0;
   font-size: 18px;
   border-radius: 12px;
   border: none;
+}
+
+input, select {
   background: #1c1c1e;
   color: white;
 }
 
+button {
+  background: #007aff;
+  color: white;
+  font-weight: bold;
+}
+
+/* helper */
 .helper {
   font-size: 13px;
   opacity: 0.7;
@@ -42,6 +52,7 @@ input, select {
   display: none;
 }
 
+/* banner */
 .banner {
   text-align: center;
   margin: 10px 0;
@@ -50,14 +61,15 @@ input, select {
   color: #00ff99;
 }
 
+/* row */
 .cycle {
   display: flex;
   overflow-x: auto;
   gap: 10px;
 }
 
+/* tiles */
 .day {
-  display: inline-block;
   width: 90px;
   padding: 12px;
   margin: 4px;
@@ -75,11 +87,13 @@ input, select {
   font-size: 13px;
 }
 
+/* WORK */
 .work {
   background: #8b0000;
   color: #fff;
 }
 
+/* OFF */
 .off {
   background: #00ff99;
   color: #000;
@@ -87,6 +101,7 @@ input, select {
   box-shadow: 0 0 8px #00ff99;
 }
 
+/* SELECTED */
 .work.today {
   background: #ff2a2a;
   border: 3px solid #fff;
@@ -108,6 +123,15 @@ input, select {
   font-weight: bold;
 }
 
+/* LOGIN */
+.login {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+}
+
 .version {
   position: fixed;
   bottom: 5px;
@@ -120,6 +144,18 @@ input, select {
 </head>
 
 <body>
+
+<!-- LOGIN -->
+
+<div id="loginScreen" class="login" style="display:none;">
+  <h2>O-DAYS</h2>
+  <input type="password" id="pw" placeholder="Enter password">
+  <button onclick="checkPassword()">Enter</button>
+</div>
+
+<!-- APP -->
+
+<div id="app" style="display:none;">
 
 <h1>O-DAYS</h1>
 
@@ -142,10 +178,39 @@ input, select {
 
 <div id="out"></div>
 
-<div class="version">v28</div>
+<div class="version">v29</div>
+
+</div>
 
 <script>
 
+/* PASSWORD */
+const PASSWORD = "123koru";
+
+function checkPassword() {
+  const input = document.getElementById("pw").value.trim();
+
+  if (input === PASSWORD) {
+    localStorage.setItem("auth", "yes");
+    showApp();
+  } else {
+    alert("Incorrect password");
+  }
+}
+
+function showApp() {
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("app").style.display = "block";
+}
+
+/* LOGIN CHECK */
+if (localStorage.getItem("auth") === "yes") {
+  showApp();
+} else {
+  document.getElementById("loginScreen").style.display = "flex";
+}
+
+/* DATE PICKERS */
 flatpickr("#start", {
   dateFormat: "d M Y",
   onChange: toggleHelper
@@ -156,12 +221,10 @@ flatpickr("#check", {
   onChange: run
 });
 
-/* show/hide helper */
+/* helper visibility */
 function toggleHelper() {
-  const startVal = document.getElementById("start").value;
-  const helper = document.getElementById("helperText");
-
-  helper.style.display = startVal ? "block" : "none";
+  const val = document.getElementById("start").value;
+  document.getElementById("helperText").style.display = val ? "block" : "none";
 }
 
 /* load saved values */
@@ -175,6 +238,7 @@ window.addEventListener("DOMContentLoaded", () => {
   toggleHelper();
 });
 
+/* MAIN */
 function run() {
 
   let sVal = document.getElementById("start").value;
@@ -214,6 +278,7 @@ function run() {
   document.getElementById("out").innerHTML =
     "<div class='cycle'>" + html + "</div>";
 
+  /* next OFF */
   let next = new Date(c);
   while (true) {
     let diff = Math.floor((next - s) / 86400000);
