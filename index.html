@@ -24,7 +24,6 @@ h1 {
   margin-bottom: 20px;
 }
 
-/* inputs */
 input, select, button {
   width: 100%;
   padding: 16px;
@@ -39,7 +38,6 @@ input, select {
   color: white;
 }
 
-/* banner */
 .banner {
   text-align: center;
   margin: 10px 0;
@@ -48,7 +46,6 @@ input, select {
   color: #00e676;
 }
 
-/* row */
 .cycle {
   display: flex;
   overflow-x: auto;
@@ -58,7 +55,6 @@ input, select {
   -webkit-overflow-scrolling: touch;
 }
 
-/* tiles */
 .day {
   flex: 0 0 95px;
   padding: 12px;
@@ -66,24 +62,20 @@ input, select {
   text-align: center;
   font-size: 15px;
   border: 2px solid #666;
-  transition: all 0.2s ease;
 }
 
-/* WORK */
 .work {
   background: #8b0000;
   color: #fff;
   opacity: 0.85;
 }
 
-/* OFF */
 .off {
   background: #00e676;
   color: #000;
   font-weight: bold;
 }
 
-/* SELECTED WORK */
 .work.today {
   background: #ff2a2a;
   border: 3px solid #ffffff;
@@ -92,7 +84,6 @@ input, select {
   transform: scale(1.08);
 }
 
-/* SELECTED OFF */
 .off.today {
   background: #00ff99;
   border: 3px solid #ffffff;
@@ -100,7 +91,6 @@ input, select {
   transform: scale(1.08);
 }
 
-/* login */
 .login {
   display: flex;
   flex-direction: column;
@@ -122,15 +112,11 @@ input, select {
 
 <body>
 
-<!-- LOGIN -->
-
 <div id="loginScreen" class="login" style="display:none;">
   <h2>O-DAYS</h2>
   <input type="password" id="pw" placeholder="Enter password">
   <button onclick="checkPassword()">Enter</button>
 </div>
-
-<!-- APP -->
 
 <div id="app" style="display:none;">
 
@@ -151,13 +137,12 @@ input, select {
 
 <div id="out"></div>
 
-<div class="version">v16</div>
+<div class="version">v17</div>
 
 </div>
 
 <script>
 
-/* PASSWORD */
 const PASSWORD = "123koru";
 
 function checkPassword() {
@@ -182,7 +167,6 @@ if (localStorage.getItem("auth") === "yes") {
   document.getElementById("loginScreen").style.display = "flex";
 }
 
-/* LOAD SAVED SETTINGS */
 window.addEventListener("DOMContentLoaded", () => {
   const s = localStorage.getItem("start");
   const p = localStorage.getItem("pattern");
@@ -191,7 +175,6 @@ window.addEventListener("DOMContentLoaded", () => {
   if (p) document.getElementById("pattern").value = p;
 });
 
-/* MAIN */
 function run() {
 
   let sVal = document.getElementById("start").value;
@@ -200,7 +183,6 @@ function run() {
 
   if (!sVal || !cVal) return;
 
-  /* SAVE SETTINGS */
   localStorage.setItem("start", sVal);
   localStorage.setItem("pattern", document.getElementById("pattern").value);
 
@@ -222,15 +204,16 @@ function run() {
 
     let type = pos < work ? "work" : "off";
 
+    let label = (i === 0) ? type.toUpperCase() : type;
+
     html += "<div class='day " + type + (i===0 ? " today" : "") + "'>" +
-            d.getDate() + "<br>" + type +
+            d.getDate() + "<br>" + label +
             "</div>";
   }
 
   document.getElementById("out").innerHTML =
     "<div class='cycle'>" + html + "</div>";
 
-  /* FIND NEXT OFF */
   let next = new Date(c);
   while (true) {
     let diff = Math.floor((next - s) / 86400000);
