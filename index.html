@@ -39,10 +39,13 @@ input, select {
   color: white;
 }
 
-button {
-  background: #007aff;
-  color: white;
+/* banner */
+.banner {
+  text-align: center;
+  margin: 10px 0;
+  font-size: 18px;
   font-weight: bold;
+  color: #00e676;
 }
 
 /* row */
@@ -144,9 +147,11 @@ button {
 
 <label>Check Date:</label> <input id="check" type="date" onchange="run()">
 
+<div id="nextOff" class="banner"></div>
+
 <div id="out"></div>
 
-<div class="version">v15</div>
+<div class="version">v16</div>
 
 </div>
 
@@ -177,11 +182,31 @@ if (localStorage.getItem("auth") === "yes") {
   document.getElementById("loginScreen").style.display = "flex";
 }
 
-/* MAIN LOGIC */
+/* LOAD SAVED SETTINGS */
+window.addEventListener("DOMContentLoaded", () => {
+  const s = localStorage.getItem("start");
+  const p = localStorage.getItem("pattern");
+
+  if (s) document.getElementById("start").value = s;
+  if (p) document.getElementById("pattern").value = p;
+});
+
+/* MAIN */
 function run() {
-  let s = new Date(document.getElementById("start").value);
-  let c = new Date(document.getElementById("check").value);
+
+  let sVal = document.getElementById("start").value;
+  let cVal = document.getElementById("check").value;
   let p = document.getElementById("pattern").value.split("-");
+
+  if (!sVal || !cVal) return;
+
+  /* SAVE SETTINGS */
+  localStorage.setItem("start", sVal);
+  localStorage.setItem("pattern", document.getElementById("pattern").value);
+
+  let s = new Date(sVal);
+  let c = new Date(cVal);
+
   let work = parseInt(p[0]);
   let off = parseInt(p[1]);
   let cycle = work + off;
@@ -204,6 +229,18 @@ function run() {
 
   document.getElementById("out").innerHTML =
     "<div class='cycle'>" + html + "</div>";
+
+  /* FIND NEXT OFF */
+  let next = new Date(c);
+  while (true) {
+    let diff = Math.floor((next - s) / 86400000);
+    let pos = ((diff % cycle) + cycle) % cycle;
+    if (pos >= work) break;
+    next.setDate(next.getDate() + 1);
+  }
+
+  document.getElementById("nextOff").innerText =
+    "Next OFF: " + next.toDateString();
 
   setTimeout(() => {
     document.querySelector('.today')?.scrollIntoView({
